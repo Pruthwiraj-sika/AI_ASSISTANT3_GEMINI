@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Pruthwiraj">
+<meta name="description" content="Rikuoh.ai - Single page cinematic AI assistant. Developed by Pruthwiraj. Contact: +91 8637280048">
+<title>Rikuoh.ai | Developed by Pruthwiraj</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--red:#E11D2E;--blue:#1E4BFF}
+html{scroll-behavior:smooth}
+body{background:#05060A;color:#F8FAFC;font-family:'Inter',sans-serif;overflow-x:hidden}
+.font-heading{font-family:'Orbitron','Bebas Neue',sans-serif}
+.bebas{font-family:'Bebas Neue',sans-serif}
+.halftone{background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 0);background-size:22px 22px;pointer-events:none}
+.glass{background:rgba(15,23,42,.68);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.09)}
+.glow-red{box-shadow:0 0 34px rgba(225,29,46,.5)}
+.glow-blue{box-shadow:0 0 34px rgba(30,75,255,.45)}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:#05060A}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px}::-webkit-scrollbar-thumb:hover{background:var(--red)}
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;inset:0;pointer-events:none;opacity:.8}
+.glitch::before{color:#1E4BFF;transform:translate(3px,0);clip-path:inset(0 0 55% 0);animation:gl 3.2s infinite steps(1)}
+.glitch::after{color:#38bdf8;transform:translate(-3px,0);clip-path:inset(55% 0 0 0);animation:gl 3.2s .4s infinite steps(1) reverse}
+@keyframes gl{0%,88%,100%{transform:translate(0)}90%{transform:translate(4px,-2px)}94%{transform:translate(-4px,2px)}97%{transform:translate(2px,0)}}
+.shimmer{background:linear-gradient(90deg,#E11D2E,#fff,#1E4BFF,#E11D2E);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 4s linear infinite}
+@keyframes sh{to{background-position:300% 0}}
+.panel{clip-path:polygon(0 0,100% 3%,97% 100%,3% 97%)}
+.tilt{transition:transform .15s ease-out}
+.pow{position:absolute;top:-14px;right:-6px;font-family:'Bebas Neue';font-size:26px;color:#111;background:#FACC15;padding:0 10px;transform:rotate(8deg);clip-path:polygon(0 15%,15% 0,50% 10%,85% 0,100% 20%,92% 60%,100% 100%,50% 88%,0 100%)}
+.dots span{animation:dt 1s infinite;display:inline-block}.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes dt{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-5px);opacity:1}}
+.cur{display:inline-block;width:8px;height:1em;margin-left:2px;vertical-align:text-bottom;background:#E11D2E;animation:bk 1s steps(1) infinite}
+@keyframes bk{50%{opacity:0}}
+.md p{margin:.4rem 0}.md pre{background:#0b1020;padding:.75rem;border-radius:.6rem;overflow-x:auto;margin:.5rem 0}.md code{font-size:.8rem}.md ul{list-style:disc;padding-left:1.2rem}
+#loader{transition:opacity .7s}
+</style>
+</head>
+<body class="relative selection:bg-red-600 selection:text-white">
+
+<div id="loader" class="fixed inset-0 z-[70] bg-[#05060A] flex flex-col items-center justify-center">
+  <p class="bebas text-5xl tracking-[.25em] text-white">RIKUOH<span class="text-red-600">.AI</span></p>
+  <p class="shimmer font-heading text-xs tracking-[.3em] mt-3">Developed by Pruthwiraj</p>
+</div>
+
+<canvas id="rain" class="fixed inset-0 z-0 opacity-30 pointer-events-none"></canvas>
+<div class="fixed inset-0 halftone z-10"></div>
+
+<nav class="fixed top-0 inset-x-0 z-40 bg-slate-950/75 backdrop-blur-md border-b border-slate-900 px-5 md:px-8 py-3 flex items-center justify-between">
+  <a href="#" class="bebas text-3xl tracking-widest bg-gradient-to-r from-red-600 to-blue-500 bg-clip-text text-transparent">RIKUOH.AI</a>
+  <div class="hidden md:flex gap-8 text-sm font-medium text-slate-300">
+    <a href="#hero" class="hover:text-red-500">Home</a>
+    <a href="#chat" class="hover:text-red-500">Live Chat</a>
+    <a href="#features" class="hover:text-red-500">Powers</a>
+    <a href="#contact" class="hover:text-red-500">Contact</a>
+  </div>
+  <a href="tel:+918637280048" class="bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-4 py-2.5 rounded-lg glow-red">Call 8637280048</a>
+</nav>
+
+<main class="relative z-30">
+  <!-- HERO SECTION -->
+  <section id="hero" class="relative h-screen min-h-[640px] flex items-center overflow-hidden">
+    <div id="cv3" class="absolute inset-0 z-0"></div>
+    <div class="absolute inset-0 z-10 pointer-events-none" style="background:radial-gradient(ellipse at 70% 55%,transparent 25%,#05060A 90%),linear-gradient(90deg,#05060A 0%,transparent 50%)"></div>
+    <div class="relative z-20 px-6 md:px-16 max-w-3xl pointer-events-none mt-10">
+      <span class="pointer-events-auto inline-block py-1.5 px-4 rounded-full glass text-red-400 text-xs font-bold tracking-widest mb-6 glow-red">Developed by Pruthwiraj</span>
+      <h1 class="bebas text-[4.2rem] sm:text-8xl md:text-[9rem] leading-[.9] tracking-wide">
+        <span class="glitch" data-text="ASK ANYTHING.">ASK ANYTHING.</span><br><span class="glitch text-red-600" data-text="STRIKE FAST.">STRIKE FAST.</span>
+      </h1>
+      <p class="text-slate-300 max-w-md mt-6 mb-9 text-base md:text-lg">A dark, fast cinematic AI assistant powered by Gemini. Ask, code and explore instantly.</p>
+      <div class="flex flex-col sm:flex-row gap-4 pointer-events-auto">
+        <a href="#chat" class="bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-4 rounded-xl text-center glow-red transition">Start Chatting Now</a>
+        <a href="#contact" class="glass hover:bg-slate-800/80 text-white font-bold px-8 py-4 rounded-xl text-center transition">Contact Pruthwiraj</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE CHAT SECTION -->
+  <section id="chat" class="py-24 px-4 max-w-4xl mx-auto">
+    <h2 class="bebas text-5xl md:text-6xl text-center mb-3 tracking-wider">Talk to <span class="text-red-600">Rikuoh.ai</span></h2>
+    <p class="text-center text-slate-400 mb-10 text-sm">Direct connection with Gemini-2.5-Flash backend.</p>
+
+    <div class="glass rounded-2xl flex flex-col h-[520px] overflow-hidden border-red-500/20 shadow-2xl relative">
+      <div class="bg-slate-900/90 px-6 py-3 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-3"><span class="w-3 h-3 rounded-full bg-red-600 animate-pulse"></span><span class="font-mono text-xs text-slate-300">rikuoh@gemini:~$ online</span></div>
+        <span class="text-xs text-slate-400">Pruthwiraj Ecosystem</span>
+      </div>
+
+      <div id="chatBox" class="flex-1 overflow-y-auto p-6 space-y-4">
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center shrink-0 font-heading text-xs text-red-400">R</div>
+          <div class="p-4 rounded-2xl max-w-[85%] bg-slate-900/90 border border-slate-800 text-sm leading-relaxed">Hello! I am Rikuoh.ai, built by Pruthwiraj. Type your query below.</div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-900/90 border-t border-slate-800 flex gap-3">
+        <input id="userInput" type="text" placeholder="Type prompt here..." autocomplete="off" class="flex-1 bg-slate-950 border border-slate-800 focus:border-red-600 focus:shadow-[0_0_18px_rgba(225,29,46,.4)] rounded-xl px-4 py-3 text-sm outline-none transition">
+        <button id="sendBtn" class="bg-gradient-to-r from-red-600 to-blue-600 hover:opacity-90 px-6 py-3 rounded-xl font-semibold text-sm glow-red shrink-0">Send</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- POWERS SECTION -->
+  <section id="features" class="py-24 px-4 max-w-6xl mx-auto">
+    <h2 class="bebas text-5xl md:text-7xl text-center mb-4 tracking-wider">Four powers. <span class="text-red-600">Zero lag.</span></h2>
+    <p class="text-center text-slate-400 mb-16">Everything you need, in one dark corner of the web.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+      <div class="tilt panel glass p-7 relative"><span class="pow">ZAP!</span><h3 class="font-heading font-bold mb-2 text-red-400">Gemini Speed</h3><p class="text-sm text-slate-400">Instant neural responses powered by Google GenAI.</p></div>
+      <div class="tilt panel glass p-7 relative"><span class="pow" style="background:#38bdf8">CODE!</span><h3 class="font-heading font-bold mb-2 text-cyan-400">Code helper</h3><p class="text-sm text-slate-400">Write, explain and fix code effortlessly.</p></div>
+      <div class="tilt panel glass p-7 relative"><span class="pow" style="background:#f87171">SAFE!</span><h3 class="font-heading font-bold mb-2 text-red-400">Secure Access</h3><p class="text-sm text-slate-400">Clean architecture with environment token safety.</p></div>
+      <div class="tilt panel glass p-7 relative"><span class="pow">FAST!</span><h3 class="font-heading font-bold mb-2 text-blue-400">Multilingual</h3><p class="text-sm text-slate-400">Seamless communication in Hindi, English and code.</p></div>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section id="contact" class="py-24 px-4 max-w-3xl mx-auto text-center">
+    <div class="glass rounded-3xl p-10 md:p-14 border-2 border-blue-500/40 glow-blue relative overflow-hidden">
+      <div class="absolute -top-20 -left-20 w-56 h-56 rounded-full bg-red-600/20 blur-3xl"></div>
+      <div class="absolute -bottom-20 -right-20 w-56 h-56 rounded-full bg-blue-600/25 blur-3xl"></div>
+      <h2 class="bebas text-5xl md:text-6xl tracking-wider relative">Got a project? <span class="text-red-600">Call the developer.</span></h2>
+      <p class="text-slate-400 mt-3 relative">Website, AI app or custom chatbot. Talk to Pruthwiraj directly.</p>
+      <a href="tel:+918637280048" class="relative block font-heading font-black text-3xl sm:text-5xl mt-8 bg-gradient-to-r from-red-500 via-white to-blue-500 bg-clip-text text-transparent">+91 86372 80048</a>
+      <div class="relative flex flex-col sm:flex-row gap-4 justify-center mt-8">
+        <a href="tel:+918637280048" class="bg-red-600 hover:bg-red-500 font-bold px-8 py-3.5 rounded-xl glow-red">Call now</a>
+        <a href="https://wa.me/918637280048" target="_blank" rel="noopener" class="bg-emerald-600 hover:bg-emerald-500 font-bold px-8 py-3.5 rounded-xl">WhatsApp</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="relative z-30 py-12 border-t border-slate-900 text-center text-xs text-slate-500">
+  <div class="w-32 h-0.5 bg-gradient-to-r from-red-600 via-cyan-400 to-blue-600 mx-auto mb-5"></div>
+  <p class="shimmer font-heading font-bold tracking-widest text-sm">Developed by Pruthwiraj</p>
+  <p class="mt-2">&copy; 2026 Rikuoh.ai. All rights reserved. | <a class="hover:text-red-400" href="tel:+918637280048">+91 8637280048</a></p>
+</footer>
+
+<script>
+const $=id=>document.getElementById(id), reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+addEventListener('load',()=>setTimeout(()=>{const l=$('loader');if(!l)return;l.style.opacity=0;setTimeout(()=>l.remove(),700)},1000));
+
+// ================= LIVE CHAT LOGIC (pehle define, taaki 3D ka error isse na roke) =================
+const esc=s=>s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const md=s=>window.marked?marked.parse(s):esc(s).replace(/\n/g,'<br>');
+const AVA='<div class="w-9 h-9 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center shrink-0 font-heading text-xs text-red-400">R</div>';
+
+async function sendMessage(){
+  const inp=$('userInput'),box=$('chatBox'),btn=$('sendBtn');
+  const text=inp.value.trim();if(!text)return;
+
+  box.insertAdjacentHTML('beforeend',`<div class="flex items-start gap-3 flex-row-reverse"><div class="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center shrink-0 text-xs font-heading text-blue-400">U</div><div class="p-4 rounded-2xl max-w-[85%] bg-blue-600 text-sm leading-relaxed shadow-lg">${esc(text)}</div></div>`);
+  inp.value='';
+
+  const row=document.createElement('div');row.className='flex items-start gap-3';
+  row.innerHTML=AVA+'<div class="ans p-4 rounded-2xl max-w-[85%] bg-slate-900/90 border border-slate-800 text-sm md shadow-xl"><span class="dots text-cyan-400"><span>&#9679;</span> <span>&#9679;</span> <span>&#9679;</span></span></div>';
+  box.appendChild(row);const el=row.querySelector('.ans');box.scrollTop=box.scrollHeight;
+
+  btn.textContent='Wait...';btn.disabled=true;
+  try{
+    const fd=new FormData();
+    fd.append('prompt',text);
+    const r=await fetch('/chat',{method:'POST',body:fd});
+    if(!r.ok) throw new Error('Server error '+r.status);
+    const j=await r.json();
+    el.innerHTML=md(j.reply||'(khali jawab aaya)');
+    if(window.hljs)el.querySelectorAll('pre code').forEach(b=>hljs.highlightElement(b));
+  }catch(e){
+    el.innerHTML=`<span class="text-red-400">Connection error: ${esc(e.message)}</span>`;
+  }finally{
+    btn.textContent='Send';btn.disabled=false;
+    box.scrollTop=box.scrollHeight;
+  }
+}
+
+$('sendBtn').onclick=sendMessage;
+$('userInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();sendMessage()}});
+
+// ================= Tilt effect =================
+document.querySelectorAll('.tilt').forEach(el=>{
+  el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;el.style.transform=`perspective(700px) rotateY(${x*14}deg) rotateX(${-y*14}deg) translateY(-6px)`});
+  el.addEventListener('mouseleave',()=>el.style.transform='');
+});
+
+// ================= Matrix rain =================
+if(!reduce){const rc=$('rain'),rx=rc.getContext('2d');let drops=[];
+  const rz=()=>{rc.width=innerWidth;rc.height=innerHeight;drops=Array.from({length:Math.ceil(innerWidth/16)},()=>Math.random()*rc.height/16)};rz();addEventListener('resize',rz);
+  setInterval(()=>{rx.fillStyle='rgba(5,6,10,.14)';rx.fillRect(0,0,rc.width,rc.height);rx.font='14px monospace';
+    drops.forEach((y,i)=>{rx.fillStyle=Math.random()<.5?'rgba(30,75,255,.6)':'rgba(225,29,46,.55)';rx.fillText('01'[Math.random()*2|0],i*16,y*16);drops[i]=y*16>rc.height&&Math.random()>.975?0:y+1})},60)}
+
+// ================= 3D Snake Background =================
+try{
+let mx=0,my=0;
+addEventListener('pointermove',e=>{mx=e.clientX/innerWidth*2-1;my=-(e.clientY/innerHeight)*2+1});
+const scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x05060A,.04);
+const cam=new THREE.PerspectiveCamera(42,1,.1,100);
+const R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setPixelRatio(Math.min(devicePixelRatio,2));$('cv3').appendChild(R.domElement);
+scene.add(new THREE.AmbientLight(0x8899cc,.4));
+const rl=new THREE.PointLight(0xE11D2E,3.2,20);rl.position.set(-3,3,3);scene.add(rl);
+const bl=new THREE.PointLight(0x1E4BFF,3.2,20);bl.position.set(6,3,-1);scene.add(bl);
+const dl=new THREE.DirectionalLight(0xffffff,.7);dl.position.set(1,5,6);scene.add(dl);
+const grid=new THREE.GridHelper(60,60,0x1E4BFF,0x151a2c);grid.material.transparent=true;grid.material.opacity=.3;scene.add(grid);
+
+const sc=document.createElement('canvas');sc.width=sc.height=128;const sx=sc.getContext('2d');
+sx.fillStyle='#050b08';sx.fillRect(0,0,128,128);
+for(let r=0;r<16;r++)for(let q=0;q<9;q++){const cx=q*16+(r%2?8:0)-8,cy=r*8,g=sx.createRadialGradient(cx,cy+3,1,cx,cy+4,10);
+  g.addColorStop(0,'#3a6f57');g.addColorStop(.55,'#14301f');g.addColorStop(1,'#050b08');sx.fillStyle=g;
+  sx.beginPath();sx.moveTo(cx,cy-4);sx.lineTo(cx+8,cy+4);sx.lineTo(cx,cy+12);sx.lineTo(cx-8,cy+4);sx.closePath();sx.fill()}
+const stex=new THREE.CanvasTexture(sc);stex.wrapS=stex.wrapT=THREE.RepeatWrapping;stex.repeat.set(2,1);
+const skin=new THREE.MeshPhysicalMaterial({color:0xffffff,map:stex,bumpMap:stex,bumpScale:1.2,roughness:.38,metalness:.15,clearcoat:.9,clearcoatRoughness:.25,emissive:0x03100a});
+
+const V=(x,y,z)=>new THREE.Vector3(x,y,z), N=84, DIST=.2, geo=new THREE.SphereGeometry(1,20,14);
+const rad=i=>.21*Math.min(1,.62+i/12)*(1-Math.pow(i/N,2.4)*.9)+.03;
+const segs=[],F=[],T=[],P=[];
+for(let i=0;i<N;i++){const m=new THREE.Mesh(geo,skin);if(i)scene.add(m);segs.push(m);F.push(V(-14,1,-4));T.push(V());P.push(V())}
+
+const head=new THREE.Group();scene.add(head);
+const part=(m,s,p)=>{const o=new THREE.Mesh(geo,m);o.scale.set(...s);o.position.set(...p);head.add(o);return o};
+part(skin,[.28,.17,.44],[0,0,.08]);part(skin,[.19,.12,.26],[0,-.01,.4]);
+const eyeM=new THREE.MeshBasicMaterial({color:0xffb020}),pupM=new THREE.MeshBasicMaterial({color:0x000000});
+[-1,1].forEach(s=>{part(eyeM,[.055,.05,.05],[s*.17,.08,.3]);part(pupM,[.012,.045,.02],[s*.17,.08,.345]);});
+const eyeLight=new THREE.PointLight(0xffa020,1.5,4);eyeLight.position.set(0,.1,.6);head.add(eyeLight);
+
+let X0=2.1,curve,headRest,introT=reduce?0:6.5,restK=0;
+function build(){
+  const m=innerWidth<768;X0=m?0:2.1;
+  cam.aspect=innerWidth/innerHeight;cam.position.set(m?0:.4,1.7,m?11:8.2);cam.lookAt(m?0:1,1.2,0);cam.updateProjectionMatrix();R.setSize($('cv3').clientWidth,$('cv3').clientHeight);
+  const th=[];let a=0;for(let i=14;i<N;i++){th.push(a);a+=DIST/(.75+a*.02)}
+  const tmax=a;
+  th.forEach((a,k)=>{const r=.75+a*.02;T[14+k].set(X0+Math.cos(a)*r,.2+(tmax-a)*.05,Math.sin(a)*r)});
+  headRest=V(X0-.1,2.5,.6);const base=T[14];
+  for(let i=0;i<14;i++){const u=i/14;T[i].copy(headRest).lerp(base,u);T[i].x+=Math.sin(u*Math.PI*2)*.25;T[i].z+=Math.sin(u*Math.PI)*.2}
+  curve=new THREE.CatmullRomCurve3([V(-14,1,-4),V(-6,3,0),V(-2,.6,3),V(3,3.2,1),V(7,1,-3),V(4,.4,3.5),V(-1,2.2,4),T[0].clone()],false,'catmullrom',.5);
+}
+build();addEventListener('resize',build);
+if(reduce){for(let i=0;i<N;i++)F[i].copy(T[i]);restK=1}
+
+const clock=new THREE.Clock(),hp=V(-14,1,-4),look=V(),aim=V(),dir=V();let lookK=0;
+(function loop(){requestAnimationFrame(loop);
+  const t=clock.getElapsedTime(),x=introT?Math.min(1,t/introT):1;
+  if(x<1){const u=1-Math.pow(1-x,1.4),p=curve.getPoint(u),tan=curve.getTangent(u),w=Math.sin(t*6)*.5*(1-x);
+    hp.set(p.x-tan.z*w,p.y,p.z+tan.x*w)}else hp.copy(T[0]);
+  F[0].copy(hp);
+  for(let i=1;i<N;i++){dir.copy(F[i-1]).sub(F[i]);const d=dir.length();if(d>DIST)F[i].copy(F[i-1]).addScaledVector(dir,-DIST/d)}
+  restK+=((x>=1?1:0)-restK)*.03;
+  for(let i=0;i<N;i++){P[i].copy(F[i]).lerp(T[i],restK);P[i].y+=Math.sin(t*1.5-i*.3)*.02*restK}
+  for(let i=1;i<N;i++){const m=segs[i],r=rad(i);m.position.copy(P[i]);m.lookAt(P[i-1]);m.scale.set(r,r,r*1.6)}
+  head.position.copy(P[0]);dir.copy(P[0]).sub(P[1]).normalize();
+  lookK+=((x>=1?.92:0)-lookK)*.03;look.set(mx*7+X0*.3,1.8+my*2.5,7);
+  aim.copy(P[0]).addScaledVector(dir,3).lerp(look,lookK);head.lookAt(aim);
+  R.render(scene,cam)})();
+}catch(err){console.warn('3D background load nahi hua:',err)}
+</script>
+</body>
+</html>
